@@ -4,7 +4,6 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import './index.css';
 import axios from 'axios';
-import Moment from 'moment';
 
 class App extends React.Component {
     constructor(props) {
@@ -16,77 +15,43 @@ class App extends React.Component {
             highestDate: '',
             maxProfit: 0,
         }
-        this.maxProfitAlgorithm= this.maxProfitAlgorithm.bind(this);
+        this.maxProfitAlgorithm = this.maxProfitAlgorithm.bind(this);
     }
 
     maxProfitAlgorithm(results) {
         let lowestValue = results[0].value;
-        let highestValue = results[0].value;
+        let currentProfit = 0;
         let lowestDate = results[0].date;
         let highestDate = results[0].date;
         let maxProfit = 0;
 
-
-        // for (let i = 1; i < results.length; i++) {
-        //     if (lowestValue > results[i].value) {
-        //         lowestValue = results[i].value;
-        //         lowestDate = results[i].date;
-        //     }
-        //     if (highestValue < results[i].value) {
-        //         highestValue = results[i].value;
-        //         highestDate = results[i].date;
-        //     }
-        // }
-
-        const datas = results.map(data =>{
+        const datas = results.map(data => {
             if (lowestValue > data.value) {
                 lowestValue = data.value;
                 lowestDate = data.date;
             }
-            if (highestValue < data.value) {
-                highestValue = data.value;
+            currentProfit = data.value - lowestValue;
+            if (currentProfit > maxProfit) {
+                maxProfit = currentProfit;
                 highestDate = data.date;
             }
-            return [data.date,data.value];
+            return [data.date, data.value];
         });
 
-        const yDate = results.map(data =>{
-            return Moment(Date.parse(data.date)).format("YYYY-MM-D");
+        const yDate = results.map(data => {
+            return data.date;
         });
 
-        if (highestValue - lowestValue > maxProfit) {
-            maxProfit = highestValue - lowestValue;
-        }
-
-        // let lowestDateFormat = Date.parse(lowestDate);
-        // let highestDateFormat = Date.parse(highestDate);
-
-
-        // for(let i = 0; i < datas.length; i++){
-
-        //     const currentDateFormat = Date.parse(datas[i][0]);
-        //     if(currentDateFormat < lowestDateFormat){
-        //         series1.push(datas[i]);
-        //     }else if(currentDateFormat >= lowestDateFormat && currentDateFormat <= highestDateFormat){
-        //         series2.push(datas[i]);
-        //     }else{
-        //         series3.push(datas[i]);
-        //     }
-        // }
-        //console.log(series1);
-
-            this.setState({
-                series: datas,
-                xAxis: yDate,
-                lowestDate: lowestDate,
-                highestDate: highestDate,
-                maxProfit: maxProfit,
-            });
-
+        this.setState({
+            series: datas,
+            xAxis: yDate,
+            lowestDate: lowestDate,
+            highestDate: highestDate,
+            maxProfit: maxProfit,
+        });
     }
 
     async componentDidMount() {
-
         const username = '1675b1124fed2d6be0832939c91784e8';
         const password = 'ae2bc1b7ed5bd67728d7fe955a9c6af7';
         const auth = "Basic " + new Buffer(username + ':' + password).toString('base64');
@@ -107,18 +72,14 @@ class App extends React.Component {
         try {
             const response = await axios(object);
             const results = response.data.data.reverse();
-            this.maxProfitAlgorithm(results);  
+            this.maxProfitAlgorithm(results);
 
         } catch (err) {
             console.error(err)
         }
-
     }
 
     render() {
-
-        console.log(this.state.lowestDate);
-        console.log(Date.parse(this.state.highestDate));
         const options = {
             title: {
                 text: 'QUALCOMM'
@@ -129,21 +90,20 @@ class App extends React.Component {
             },
             series: [{
                 data: this.state.series,
-                pointStart: Date.parse('2017-06-01'),
-                pointIntervalUnit: 'day',
-                zoneAxis: 'x',
-                zones: [{
-                    value: Date.parse(this.state.lowestDate),
-                    color: '#7cb5ec'
-                 }, {
-                    value: Date.parse(this.state.highestDate),
-                    color: '#f7a35c'
-                 },
-                 {
-                    color: '#7cb5ec'
-                }]
+                // pointStart: Date.parse('2017-06-01'),
+                // pointIntervalUnit: 'day',
+                // zoneAxis: 'x',
+                // zones: [{
+                //     value: Date.parse(this.state.lowestDate),
+                //     color: '#7cb5ec'
+                //  }, {
+                //     value: Date.parse(this.state.highestDate),
+                //     color: '#f7a35c'
+                //  },
+                //  {
+                //     color: '#7cb5ec'
+                // }]
             }],
-
         }
 
         return (
@@ -152,6 +112,8 @@ class App extends React.Component {
                     highcharts={Highcharts}
                     options={options}
                 />
+                <p>The lowest date: {this.state.lowestDate}</p>
+                <p>The highest date: {this.state.highestDate}</p>
                 <p>The max profit is: {this.state.maxProfit}</p>
             </div>
         )
