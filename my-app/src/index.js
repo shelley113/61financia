@@ -112,8 +112,8 @@ class App extends React.Component {
                     highcharts={Highcharts}
                     options={options}
                 />
-                <p>The lowest date: {this.state.lowestDate}</p>
-                <p>The highest date: {this.state.highestDate}</p>
+                <p>The Buy date: {this.state.lowestDate}</p>
+                <p>The Sell date: {this.state.highestDate}</p>
                 <p>The max profit is: {this.state.maxProfit}</p>
             </div>
         )
