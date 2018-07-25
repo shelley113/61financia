@@ -23,17 +23,19 @@ class App extends React.Component {
         let currentProfit = 0;
         let lowestDate = results[0].date;
         let highestDate = results[0].date;
+        let tempLowestDate = results[0].date;
         let maxProfit = 0;
 
         const datas = results.map(data => {
             if (lowestValue > data.value) {
                 lowestValue = data.value;
-                lowestDate = data.date;
+                tempLowestDate = data.date;
             }
             currentProfit = data.value - lowestValue;
             if (currentProfit > maxProfit) {
                 maxProfit = currentProfit;
                 highestDate = data.date;
+                lowestDate = tempLowestDate;
             }
             return [data.date, data.value];
         });
